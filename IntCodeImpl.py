@@ -3,7 +3,7 @@ class IntCode:
         self.mem = []
 
     def set_mem(self, data):
-        self.mem = data
+        self.mem = data.copy()
 
     def get_mem(self):
         return self.mem
