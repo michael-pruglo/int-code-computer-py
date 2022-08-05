@@ -30,7 +30,7 @@ class IntCode:
             step += 1
 
             if opcode==99:
-                op_color = "0"
+                op_color = "36"
                 if verbose:
                     print(f"\033[0;{op_color}m #{step:<4} @{i:<3}: 99 exit")
                 break
@@ -88,12 +88,28 @@ class IntCode:
                     print('\n')
                 i += 2
 
+            elif opcode==4:
+                dest = self.mem[i+1]
+
+                op_color = "35"
+                if verbose:
+                    print(f"\033[0;{op_color}m #{step:<4} @{i:<3}: 4 output m[{dest}]")
+                    self.print_mem({(i,i+1):f"\033[4;{op_color}m", (dest,None):f"\033[7;{op_color}m"})
+
+                self.output.append(self.mem[dest])
+
+                if verbose:
+                    self.print_mem({(dest,None):f"\033[7;{op_color}m"})
+                    print('\n')
+                i += 2
+
             else:
                 raise Exception(f"unknown opcode @{i}: {opcode}")
 
     def print_mem(self, color_map:dict[tuple,str]):
         COLOR_DEFAULT = "\033[0;37m"
         print("input:  ", list(self.input))
+        print("output: ", self.output)
         print("memory: ", end='')
         for mem_pos,mem_val in enumerate(self.get_mem()):
             curr_color = COLOR_DEFAULT

@@ -10,20 +10,20 @@ class IntCodeTest(unittest.TestCase):
         ic = IntCode()
         mlist = [1,2,3]
         ic.set_mem(mlist)
-        self.assertEqual(ic.get_mem(), mlist)
+        self.assertEqual(mlist, ic.get_mem())
 
     def exec_check_mem(self, mem_before, mem_after):
         ic = IntCode()
         ic.set_mem(mem_before)
         ic.exec()
-        self.assertEqual(ic.get_mem(), mem_after)
-        self.assertEqual(ic.get_val(), mem_after[0])
+        self.assertEqual(mem_after, ic.get_mem())
+        self.assertEqual(mem_after[0], ic.get_val())
 
     def exec_check_val(self, mem_before, expected):
         ic = IntCode()
         ic.set_mem(mem_before)
         ic.exec()
-        self.assertEqual(ic.get_val(), expected)
+        self.assertEqual(expected, ic.get_val())
 
     def test_opcode1(self):
         self.exec_check_mem([1,0,0,0,99], [2,0,0,0,99])
@@ -49,8 +49,22 @@ class IntCodeTest(unittest.TestCase):
         ic.set_mem([3,7,1,7,7,0,99,0])
         ic.set_input([4])
         ic.exec()
-        self.assertEqual(ic.get_mem(), [8,7,1,7,7,0,99,4])
-        self.assertEqual(ic.get_val(), 8)
+        self.assertEqual([8,7,1,7,7,0,99,4], ic.get_mem())
+        self.assertEqual(8, ic.get_val())
+
+    def test_opcode4(self):
+        ic = IntCode()
+        ic.set_mem([4,1,99])
+        ic.exec()
+        self.assertEqual([4,1,99], ic.get_mem())
+        self.assertEqual([1], ic.get_output())
+
+    def test_opcodes34(self):
+        ic = IntCode()
+        ic.set_mem([3,0,4,0,99])
+        ic.set_input([18])
+        ic.exec()
+        self.assertEqual([18], ic.get_output())
 
     def test_stop_at_99(self):
         pass
