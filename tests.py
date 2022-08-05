@@ -92,33 +92,37 @@ class IntCodeTest(unittest.TestCase):
         ic.exec()
         self.assertEqual([0,0,0,0,0,0,0,0,0,12896948], ic.get_output())
 
-    def test_opcode6pt(self):
-        ic = IntCode()
-        ic.set_mem([3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9])
-        ic.set_input([18])
-        ic.exec()
-        self.assertEqual([1], ic.get_output())
+    def test_opcode6p(self):
+        for val in [0, 167]:
+            ic = IntCode()
+            ic.set_mem([3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9])
+            ic.set_input([val])
+            ic.exec()
+            self.assertEqual([int(val!=0)], ic.get_output())
 
-    def test_opcode6pf(self):
-        ic = IntCode()
-        ic.set_mem([3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9])
-        ic.set_input([0])
-        ic.exec()
-        self.assertEqual([0], ic.get_output())
+    def test_opcode5i(self):
+        for val in [0, 55]:
+            ic = IntCode()
+            ic.set_mem([3,3,1105,-1,9,1101,0,0,12,4,12,99,1])
+            ic.set_input([val])
+            ic.exec()
+            self.assertEqual([int(val!=0)], ic.get_output())
 
-    def test_opcode5it(self):
-        ic = IntCode()
-        ic.set_mem([3,3,1105,-1,9,1101,0,0,12,4,12,99,1])
-        ic.set_input([55])
-        ic.exec()
-        self.assertEqual([1], ic.get_output())
+    def test_opcode7p(self):
+        for val in [7, 10]:
+            ic = IntCode()
+            ic.set_mem([3,9,7,9,10,9,4,9,99,-1,8])
+            ic.set_input([val])
+            ic.exec()
+            self.assertEqual([int(val<8)], ic.get_output())
 
-    def test_opcode5if(self):
-        ic = IntCode()
-        ic.set_mem([3,3,1105,-1,9,1101,0,0,12,4,12,99,1])
-        ic.set_input([0])
-        ic.exec()
-        self.assertEqual([0], ic.get_output())
+    def test_opcode7i(self):
+        for val in [6, 14]:
+            ic = IntCode()
+            ic.set_mem([3,3,1107,-1,8,3,4,3,99])
+            ic.set_input([val])
+            ic.exec()
+            self.assertEqual([int(val<8)], ic.get_output())
 
     def test_stop_at_99(self):
         pass
