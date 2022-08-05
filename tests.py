@@ -92,6 +92,34 @@ class IntCodeTest(unittest.TestCase):
         ic.exec()
         self.assertEqual([0,0,0,0,0,0,0,0,0,12896948], ic.get_output())
 
+    def test_opcode6pt(self):
+        ic = IntCode()
+        ic.set_mem([3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9])
+        ic.set_input([18])
+        ic.exec()
+        self.assertEqual([1], ic.get_output())
+
+    def test_opcode6pf(self):
+        ic = IntCode()
+        ic.set_mem([3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9])
+        ic.set_input([0])
+        ic.exec()
+        self.assertEqual([0], ic.get_output())
+
+    def test_opcode5it(self):
+        ic = IntCode()
+        ic.set_mem([3,3,1105,-1,9,1101,0,0,12,4,12,99,1])
+        ic.set_input([55])
+        ic.exec()
+        self.assertEqual([1], ic.get_output())
+
+    def test_opcode5if(self):
+        ic = IntCode()
+        ic.set_mem([3,3,1105,-1,9,1101,0,0,12,4,12,99,1])
+        ic.set_input([0])
+        ic.exec()
+        self.assertEqual([0], ic.get_output())
+
     def test_stop_at_99(self):
         pass
 

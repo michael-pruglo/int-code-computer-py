@@ -112,6 +112,40 @@ class IntCode:
                     print('\n')
                 i += 2
 
+            elif opcode==5:
+                a_addr = i+1 if instruction//100%10 else self.mem[i+1]
+                a = self.mem[a_addr]
+
+                dest = self.mem[i+2] if instruction//1000%10 else self.mem[self.mem[i+2]]
+                assert(instruction//10000 == 0)
+
+                op_color = "37"
+                if verbose:
+                    print(f"\033[0;{op_color}m #{step:<4} @{i:<3}: 5 jnz {a}  to  {dest}")
+                    self.print_mem({(i,i+1,i+2):f"\033[4;{op_color}m", (dest if a else None,None):f"\033[7;{op_color}m"})
+
+                if a:
+                    i = dest
+                else:
+                    i += 3
+
+            elif opcode==6:
+                a_addr = i+1 if instruction//100%10 else self.mem[i+1]
+                a = self.mem[a_addr]
+
+                dest = self.mem[i+2] if instruction//1000%10 else self.mem[self.mem[i+2]]
+                assert(instruction//10000 == 0)
+
+                op_color = "30"
+                if verbose:
+                    print(f"\033[0;{op_color}m #{step:<4} @{i:<3}: 6 jz {a}  to  {dest}")
+                    self.print_mem({(i,i+1,i+2):f"\033[4;{op_color}m", (dest if not a else None,None):f"\033[7;{op_color}m"})
+
+                if not a:
+                    i = dest
+                else:
+                    i += 3
+
             else:
                 raise Exception(f"unknown opcode @{i}: {opcode}")
 
