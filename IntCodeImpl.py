@@ -172,6 +172,28 @@ class IntCode:
                     print('\n')
                 i += 4
 
+            elif opcode==8:
+                a_addr = i+1 if instruction//100%10 else self.mem[i+1]
+                a = self.mem[a_addr]
+
+                b_addr = i+2 if instruction//1000%10 else self.mem[i+2]
+                b = self.mem[b_addr]
+
+                dest = i+3 if instruction//10000%10 else self.mem[i+3]
+                assert(instruction//100000 == 0)
+
+                op_color = "31"
+                if verbose:
+                    print(f"\033[2;{op_color}m #{step:<4} @{i:<3}: 8 eq m[{dest}] = {a} == {b}")
+                    self.print_mem({tuple(range(i,i+4)):f"\033[4;{op_color}m", (a_addr,b_addr):f"\033[7;{op_color}m"})
+
+                self.mem[dest] = int(a==b)
+
+                if verbose:
+                    self.print_mem({(dest,None): f"\033[7;{op_color}m"})
+                    print('\n')
+                i += 4
+
             else:
                 raise Exception(f"unknown opcode @{i}: {opcode}")
 
