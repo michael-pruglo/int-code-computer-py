@@ -26,20 +26,24 @@ class IntCode:
         i = start_address
         step = 0
         while True:
-            opcode = self.mem[i]
+            instruction = self.mem[i]
+            opcode = instruction%100
             step += 1
 
             if opcode==99:
                 op_color = "36"
                 if verbose:
-                    print(f"\033[0;{op_color}m #{step:<4} @{i:<3}: 99 exit")
+                    print(f"\033[0;{op_color}m #{step:<4} @{i:<3}: 99 exit\033[0;0m")
                 break
 
             elif opcode==1:
-                a_addr = self.mem[i+1]
+                a_addr = i+1 if instruction//100%10 else self.mem[i+1]
                 a = self.mem[a_addr]
-                b_addr = self.mem[i+2]
+
+                b_addr = i+2 if instruction//1000%10 else self.mem[i+2]
                 b = self.mem[b_addr]
+
+                assert(instruction//10000 == 0)
                 dest = self.mem[i+3]
 
                 op_color = "32"
@@ -55,10 +59,13 @@ class IntCode:
                 i += 4
 
             elif opcode==2:
-                a_addr = self.mem[i+1]
+                a_addr = i+1 if instruction//100%10 else self.mem[i+1]
                 a = self.mem[a_addr]
-                b_addr = self.mem[i+2]
+
+                b_addr = i+2 if instruction//1000%10 else self.mem[i+2]
                 b = self.mem[b_addr]
+
+                assert(instruction//10000 == 0)
                 dest = self.mem[i+3]
 
                 op_color = "34"
@@ -74,6 +81,7 @@ class IntCode:
                 i += 4
 
             elif opcode==3:
+                assert(instruction//10 == 0)
                 dest = self.mem[i+1]
 
                 op_color = "33"
@@ -89,7 +97,8 @@ class IntCode:
                 i += 2
 
             elif opcode==4:
-                dest = self.mem[i+1]
+                assert(instruction//1000 == 0)
+                dest = i+1 if instruction//100%10 else self.mem[i+1]
 
                 op_color = "35"
                 if verbose:
