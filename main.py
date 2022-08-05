@@ -5,12 +5,8 @@ inp[1] = 12
 inp[2] = 2
 
 if __name__ == "__main__":
-    for noun in range(0,100):
-        for verb in range(0,100):
-            ic = IntCode()
-            inp[1], inp[2] = noun, verb
-            ic.set_mem(inp)
-            ic.exec(verbose=False)
-            if ic.get_val() == 19690720:
-                print(f"noun = {noun}, verb = {verb}")
-                exit(0)
+    ic = IntCode()
+    ic.set_mem([3,7,1,7,7,0,99,0])
+    ic.set_input([4])
+    ic.exec(verbose=True)
+    print(f"value = {ic.get_val()}")

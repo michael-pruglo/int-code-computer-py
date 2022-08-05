@@ -44,6 +44,14 @@ class IntCodeTest(unittest.TestCase):
             19690720
         )
 
+    def test_opcode3(self):
+        ic = IntCode()
+        ic.set_mem([3,7,1,7,7,0,99,0])
+        ic.set_input([4])
+        ic.exec()
+        self.assertEqual(ic.get_mem(), [8,7,1,7,7,0,99,4])
+        self.assertEqual(ic.get_val(), 8)
+
     def test_stop_at_99(self):
         pass
 
