@@ -2,25 +2,13 @@ from collections import deque
 
 
 class IntCode:
-    def __init__(self):
-        self.mem = []
-        self.input = deque()
+    def __init__(self, program=[], input=[]):
+        self.mem = program.copy()
+        self.input = deque(input)
         self.output = []
 
-    def set_mem(self, data):
-        self.mem = data.copy()
-
-    def get_mem(self):
-        return self.mem
-
-    def get_val(self):
-        return self.mem[0]
-
-    def set_input(self, data):
-        self.input = deque(data)
-
-    def get_output(self):
-        return self.output
+    def get(self):
+        return self.mem, self.output
 
     def parse_command(self, ptr):
         instruction = self.mem[ptr]
@@ -54,7 +42,7 @@ class IntCode:
 
     def exec(self):
         i = 0
-        while True:
+        while i < len(self.mem):
             opcode, args = self.parse_command(i)
 
             if   opcode == 1: self.mem[args[2]] = args[0] + args[1]
@@ -74,3 +62,9 @@ class IntCode:
                 raise Exception(f"unknown opcode @{i}: {opcode}")
 
             i += 1+len(args)
+
+
+def run_intcode_program(program=[], input=[]):
+    ic = IntCode(program, input)
+    ic.exec()
+    return ic.get()
