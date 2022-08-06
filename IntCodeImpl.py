@@ -2,13 +2,39 @@ from collections import deque
 
 
 class IntCode:
-    def __init__(self, program=[], input=[]):
-        self.mem = program.copy()
-        self.input = deque(input)
+    def __init__(self, program=None, input=None):
+        self.mem = [] if program is None else program.copy()
+        self.input = deque([] if input is None else input)
         self.output = []
 
     def get(self):
         return self.mem, self.output
+
+    class ExecutionError(RuntimeError):
+        pass
+
+    def exec(self):
+        i = 0
+        while i < len(self.mem):
+            opcode, args = self.parse_command(i)
+
+            if   opcode == 1: self.mem[args[2]] = args[0] + args[1]
+            elif opcode == 2: self.mem[args[2]] = args[0] * args[1]
+            elif opcode == 3: self.mem[args[0]] = self.input.popleft()
+            elif opcode == 4: self.output.append(args[0])
+            elif opcode == 5:
+                if args[0]:
+                    i = args[1]; continue
+            elif opcode == 6:
+                if not args[0]:
+                    i = args[1]; continue
+            elif opcode == 7: self.mem[args[2]] = int(args[0] < args[1])
+            elif opcode == 8: self.mem[args[2]] = int(args[0] == args[1])
+            elif opcode == 99: return
+
+            i += 1+len(args)
+
+        raise IntCode.ExecutionError(f"Reached the end of memory without terminating")
 
     def parse_command(self, ptr):
         OPERATION_SIGNATURES = {
@@ -42,34 +68,12 @@ class IntCode:
 
         return opcode, args
 
-    class ExecutionError(RuntimeError):
-        pass
 
-    def exec(self):
-        i = 0
-        while i < len(self.mem):
-            opcode, args = self.parse_command(i)
-
-            if   opcode == 1: self.mem[args[2]] = args[0] + args[1]
-            elif opcode == 2: self.mem[args[2]] = args[0] * args[1]
-            elif opcode == 3: self.mem[args[0]] = self.input.popleft()
-            elif opcode == 4: self.output.append(args[0])
-            elif opcode == 5:
-                if args[0]:
-                    i = args[1]; continue
-            elif opcode == 6:
-                if not args[0]:
-                    i = args[1]; continue
-            elif opcode == 7: self.mem[args[2]] = int(args[0] < args[1])
-            elif opcode == 8: self.mem[args[2]] = int(args[0] == args[1])
-            elif opcode == 99: return
-
-            i += 1+len(args)
-
-        raise IntCode.ExecutionError(f"Reached the end of memory without terminating")
-
-
-def run_intcode_program(program=[], input=[]):
+def run_intcode_program(program=None, input=None):
+    if program is None:
+        program = []
+    if input is None:
+        input = []
     ic = IntCode(program, input)
     ic.exec()
     return ic.get()
