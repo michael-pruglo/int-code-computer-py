@@ -11,9 +11,7 @@ class IntCode:
         return self.mem, self.output
 
     def parse_command(self, ptr):
-        instruction = self.mem[ptr]
-        opcode = instruction % 100
-        signature = {
+        OPERATION_SIGNATURES = {
             1: "110",
             2: "110",
             3: "0",
@@ -23,11 +21,15 @@ class IntCode:
             7: "110",
             8: "110",
             99: "",
-        }[opcode]
+        }
+        instruction = self.mem[ptr]
+        opcode = instruction % 100
+        if opcode not in OPERATION_SIGNATURES:
+            raise IntCode.ExecutionError(f"cannot parse command @{ptr}: {instruction}")
 
         args = []
         instruction //= 100
-        for arg_constraint in signature:
+        for arg_constraint in OPERATION_SIGNATURES[opcode]:
             ptr += 1
             if instruction % 10:
                 assert arg_constraint == '1'
@@ -39,6 +41,9 @@ class IntCode:
         assert instruction == 0
 
         return opcode, args
+
+    class ExecutionError(RuntimeError):
+        pass
 
     def exec(self):
         i = 0
@@ -57,11 +62,11 @@ class IntCode:
                     i = args[1]; continue
             elif opcode == 7: self.mem[args[2]] = int(args[0] < args[1])
             elif opcode == 8: self.mem[args[2]] = int(args[0] == args[1])
-            elif opcode == 99: break
-            else:
-                raise Exception(f"unknown opcode @{i}: {opcode}")
+            elif opcode == 99: return
 
             i += 1+len(args)
+
+        raise IntCode.ExecutionError(f"Reached the end of memory without terminating")
 
 
 def run_intcode_program(program=[], input=[]):

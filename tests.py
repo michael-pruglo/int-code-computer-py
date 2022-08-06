@@ -6,12 +6,11 @@ class IntCodeTest(unittest.TestCase):
     def test_ctor(self):
         ic_default = IntCode()
         self.assertEqual(([], []), ic_default.get())
-        ic_default.exec()
-        self.assertEqual(([], []), ic_default.get())
 
+        MINIMAL_PROGRAM = [99]
         self.assertEqual(
-            ([], []),
-            run_intcode_program()
+            (MINIMAL_PROGRAM, []),
+            run_intcode_program(MINIMAL_PROGRAM)
         )
 
         prog = [1,2,3,4,99]
@@ -154,7 +153,14 @@ class IntCodeTest(unittest.TestCase):
         )
 
     def test_stop_at_99(self):
-        pass
+        run_intcode_program([1,0,0,1,2,0,1,2,99], [])
+        with self.assertRaises(IntCode.ExecutionError):
+            run_intcode_program([1,0,0,1,2,0,1,2], [])
+
+    def test_unknown_opcode(self):
+        UNKNOWN_OPCODE = 33
+        with self.assertRaises(IntCode.ExecutionError):
+            run_intcode_program([2,0,0,1,UNKNOWN_OPCODE,99,99,99,99], [])
 
 
 def run():
