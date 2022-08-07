@@ -184,6 +184,10 @@ class IntCodeTest(unittest.TestCase):
             run_intcode_program([3,1989,4,1989,99],[37])[1]
         )
         self.assertEqual(
+            ([1101,1,12,7,4,7,99,13], [13]),
+            run_intcode_program([1101,1,12,7,4,7,99])
+        )
+        self.assertEqual(
             [109,1,204,-1,1001,100,1,100,1008,100,16,101,1006,101,0,99],
             run_intcode_program([109,1,204,-1,1001,100,1,100,1008,100,16,101,1006,101,0,99])[1]
         )
