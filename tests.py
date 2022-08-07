@@ -71,8 +71,8 @@ class IntCodeTest(unittest.TestCase):
 
     def test_opcode4(self):
         self.assertEqual(
-            ([4,1,99], [1]),
-            run_intcode_program([4,1,99])
+            ([4,0,99], [4]),
+            run_intcode_program([4,0,99])
         )
         self.assertEqual(
             ([104,2,99], [2]),
@@ -143,6 +143,12 @@ class IntCodeTest(unittest.TestCase):
                 )[1]
             )
 
+    def test_opcode9(self):
+        self.assertEqual(
+            [51],
+            run_intcode_program([109,10,2202,1,2,5,4,5,99,0,0,17,3])[1]
+        )
+
     def test_day3(self):
         self.assertEqual(
             [7704130],
@@ -161,6 +167,26 @@ class IntCodeTest(unittest.TestCase):
         UNKNOWN_OPCODE = 33
         with self.assertRaises(IntCode.ExecutionError):
             run_intcode_program([2,0,0,1,UNKNOWN_OPCODE,99,99,99,99], [])
+
+    def test_large_numbers(self):
+        self.assertEqual(
+            [34915192*34915192],
+            run_intcode_program([1102,34915192,34915192,7,4,7,99,0])[1]
+        )
+        self.assertEqual(
+            [1125899906842624],
+            run_intcode_program([104,1125899906842624,99])[1]
+        )
+
+    def test_distant_memory(self):
+        self.assertEqual(
+            [37],
+            run_intcode_program([3,1989,4,1989,99],[37])[1]
+        )
+        self.assertEqual(
+            [109,1,204,-1,1001,100,1,100,1008,100,16,101,1006,101,0,99],
+            run_intcode_program([109,1,204,-1,1001,100,1,100,1008,100,16,101,1006,101,0,99])[1]
+        )
 
 
 def run():
