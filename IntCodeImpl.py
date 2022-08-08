@@ -70,15 +70,13 @@ class IntCode:
         instruction //= 100
         for arg_constraint in OPERATION_SIGNATURES[opcode]:
             self.ptr += 1
-            addr = self.get_argument_addr(arg_constraint, instruction % 10)
-            self.mem_resize(addr)
-            args.append(self.mem[addr])
+            args.append(self.get_argument(arg_constraint, instruction % 10))
             instruction //= 10
         assert instruction == 0
 
         return opcode, args
 
-    def get_argument_addr(self, arg_constraint, param_mode):
+    def get_argument(self, arg_constraint, param_mode):
         class ParamMode(enum.IntEnum):
             POSITION = 0
             IMMEDIATE = 1
@@ -87,13 +85,17 @@ class IntCode:
         if param_mode == ParamMode.IMMEDIATE:
             assert arg_constraint == '1'
             addr = self.ptr
-        elif param_mode in [ParamMode.POSITION, ParamMode.RELATIVE]:
+        elif param_mode == ParamMode.POSITION:
             addr = self.ptr if arg_constraint == '0' else self.mem[self.ptr]
-            if param_mode == ParamMode.RELATIVE:
-                addr += self.rel_base
+        elif param_mode == ParamMode.RELATIVE:
+            addr = self.mem[self.ptr]+self.rel_base
+            if arg_constraint == '0':
+                return addr
         else:
             raise IntCode.ExecutionError(f"Unknown operation parameter mode @{self.ptr-1}: mode {param_mode}")
-        return addr
+
+        self.mem_resize(addr)
+        return self.mem[addr]
 
     def mem_resize(self, idx):
         if len(self.mem) <= idx:
