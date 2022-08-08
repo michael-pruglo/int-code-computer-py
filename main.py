@@ -1,7 +1,5 @@
 from IntCodeImpl import *
 
-from itertools import permutations
-
 
 def main():
     try:
