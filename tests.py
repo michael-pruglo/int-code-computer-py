@@ -1,5 +1,5 @@
 import unittest
-from IntCodeImpl import *
+from int_code_impl import *
 
 
 class IntCodeTest(unittest.TestCase):
@@ -212,9 +212,5 @@ class IntCodeTest(unittest.TestCase):
         )
 
 
-def run():
-    unittest.main()
-
-
 if __name__ == '__main__':
-    run()
+    unittest.main()
